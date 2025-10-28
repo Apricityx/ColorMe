@@ -1,3 +1,4 @@
+[[中文]](./introduction-zh_cn.md) | [英文]
 ### A simple plugin that makes players able to choose their own nickname color by commands below:
 
 ```

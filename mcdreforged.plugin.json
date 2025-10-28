@@ -1,13 +1,13 @@
 {
-  "id": "colorful_id",
-  "version": "1.0.0",
-  "name": "Colorful ID",
+  "id": "color_me",
+  "version": "1.0.1",
+  "name": "ColorMe",
   "description": {
-    "en_us": "Colorful player names!",
-    "zh_cn": "让玩家的名字五颜六色！"
+    "en_us": "Players can change their name color by themselves!",
+    "zh_cn": "让玩家自行更改名字颜色！"
   },
   "author": "Apricityx_",
-  "link": "https://github.com/Apricityx/ColorfulID",
+  "link": "https://github.com/Apricityx/ColorMe",
   "resources": [
     "LICENSE"
   ]
