@@ -1,0 +1,12 @@
+{
+  "name": "colorme-e2e-bots",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Mineflayer based end-to-end checks for ColorMe",
+  "scripts": {
+    "test": "node color-sync-test.js"
+  },
+  "dependencies": {
+    "mineflayer": "^4.20.0"
+  }
+}

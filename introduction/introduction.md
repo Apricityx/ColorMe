@@ -1,21 +1,30 @@
-[[中文]](./introduction-zh_cn.md) | [英文]
-### A simple plugin that makes players able to choose their own nickname color by commands below:
+[[中文]](./introduction-zh_cn.md) | [English]
+
+### ColorMe
+
+A simple plugin that lets players choose their own name color:
 
 ```
 !!color <color>
 ```
 
-## BEWARE: This plugin works by making players join different teams, please make sure your server doesn't rely on /team command.
+It works by making players join one of 16 vanilla scoreboard teams, one per chat color.
+Both Minecraft 1.12.x and 1.13+ are supported.
 
-## After enabling this plugin, you need to run the following command to initialize:
+After enabling the plugin, initialize the teams once:
+
 ```
 !!color install
 ```
 
-This will create several teams for players to join and adjust their nickname color.
-
-When you don't need this plugin anymore, run the following command to remove the teams:
+When you no longer need the plugin, remove the teams:
 
 ```
 !!color uninstall
 ```
+
+Other commands: `!!color list` lists the colors. `install` and `uninstall` require
+MCDReforged permission level 2 (helper) or higher.
+
+Note: a player can only be in one team, so this plugin may conflict with other systems
+that use vanilla teams for prefix/suffix/permissions.
