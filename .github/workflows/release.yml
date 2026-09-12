@@ -2,10 +2,17 @@ name: Release
 
 on:
   push:
-    tags: ['v*']
+    branches: [master, main]
+    paths:
+      - mcdreforged.plugin.json
+  workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 jobs:
   release:
@@ -13,6 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
@@ -20,23 +29,54 @@ jobs:
           cache-dependency-path: |
             requirements.txt
             requirements-dev.txt
-      - name: Verify tag matches plugin version
+      - name: Resolve the plugin version
+        id: resolve
         run: |
-          python -c "
-          import json, os, sys
-          version = json.load(open('mcdreforged.plugin.json', encoding='utf8'))['version']
-          tag = os.environ['GITHUB_REF_NAME']
-          tag_version = tag[1:] if tag.startswith('v') else tag
-          if tag_version != version:
-              sys.exit(f'tag {tag} does not match plugin version {version}')
-          "
-      - name: Install dependencies
-        run: pip install -r requirements.txt -r requirements-dev.txt
-      - name: Run unit tests
-        run: pytest -m "not e2e"
-      - name: Pack plugin
-        run: python -m mcdreforged pack -i . -o build
-      - name: Create GitHub release
+          set -euo pipefail
+          version=$(python -c "import json; print(json.load(open('mcdreforged.plugin.json', encoding='utf8'))['version'])")
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
+            should_release=true
+          else
+            previous=$(git show "${{ github.event.before }}:mcdreforged.plugin.json" 2>/dev/null \
+              | python -c "import json,sys; print(json.load(sys.stdin)['version'])" 2>/dev/null || true)
+            if [ "$version" = "$previous" ]; then
+              should_release=false
+            else
+              should_release=true
+            fi
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "should_release=$should_release" >> "$GITHUB_OUTPUT"
+          echo "Resolved version: $version (should release: $should_release)"
+      - name: Check whether the release already exists
+        id: exists
+        if: steps.resolve.outputs.should_release == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "${GITHUB_REF_NAME}" build/*.mcdr --title "${GITHUB_REF_NAME}" --generate-notes
+        run: |
+          if gh release view "v${{ steps.resolve.outputs.version }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Skip notice
+        if: steps.resolve.outputs.should_release != 'true' || steps.exists.outputs.exists == 'true'
+        run: echo "::notice::Nothing to release (version=${{ steps.resolve.outputs.version }}, changed=${{ steps.resolve.outputs.should_release }}, exists=${{ steps.exists.outputs.exists }})"
+      - name: Install dependencies
+        if: steps.resolve.outputs.should_release == 'true' && steps.exists.outputs.exists == 'false'
+        run: pip install -r requirements.txt -r requirements-dev.txt
+      - name: Run unit tests
+        if: steps.resolve.outputs.should_release == 'true' && steps.exists.outputs.exists == 'false'
+        run: pytest -m "not e2e"
+      - name: Pack plugin
+        if: steps.resolve.outputs.should_release == 'true' && steps.exists.outputs.exists == 'false'
+        run: python -m mcdreforged pack -i . -o build
+      - name: Create GitHub release
+        if: steps.resolve.outputs.should_release == 'true' && steps.exists.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v${{ steps.resolve.outputs.version }}" build/*.mcdr \
+            --target "${GITHUB_SHA}" \
+            --title "v${{ steps.resolve.outputs.version }}" \
+            --generate-notes

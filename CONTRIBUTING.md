@@ -106,24 +106,20 @@ Useful environment variables:
   artifact on every push and pull request.
 - `e2e.yml` runs the Minecraft end-to-end suite for 1.12.2 (Chinese MCDR) and 1.20.4
   (English MCDR) on pushes to `master`, weekly and on manual dispatch.
-- `release.yml` verifies the tag, runs the tests and publishes the release.
+- `release.yml` publishes a release when the version in `mcdreforged.plugin.json`
+  changes on `master`, or when triggered manually from the Actions tab.
 
 ## Release process
 
 1. Update `version` in `mcdreforged.plugin.json` following [semantic versioning](https://semver.org/).
 2. Update the readme/introductions if user-visible behavior changed.
 3. Run `pytest -m "not e2e"` and, ideally, the E2E suite.
-4. Commit the changes.
-5. Create and push a tag `vX.Y.Z` that matches the metadata version exactly:
-
-   ```bash
-   git tag vX.Y.Z
-   git push origin vX.Y.Z
-   ```
-
-6. The release workflow checks the version, runs the unit tests, packs
-   `ColorMe-vX.Y.Z.mcdr` and creates a GitHub release with generated notes and the
-   packed plugin attached.
+4. Commit the version bump.
+5. Push it to `master`, or run the `Release` workflow manually from the Actions tab.
+6. The workflow detects the version change, runs the unit tests, packs
+   `ColorMe-vX.Y.Z.mcdr`, creates the tag `vX.Y.Z` at that commit and publishes the
+   GitHub release with generated notes. If a release for that version already exists,
+   it is skipped, so re-running is safe.
 
 ## Dependencies
 

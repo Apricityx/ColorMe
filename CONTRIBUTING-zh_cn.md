@@ -95,23 +95,19 @@ MCDR_E2E=1 MC_VERSION=1.12.2 MCDR_E2E_LANGUAGE=zh_cn pytest tests/e2e
 - `ci.yml`：每次 push 和 PR 在 Python 3.10 与 3.13 上运行单元/API 测试，并构建 `.mcdr` 产物。
 - `e2e.yml`：在 push 到 `master`、每周定时和手动触发时，运行 1.12.2（中文 MCDR）
   与 1.20.4（英文 MCDR）的端到端测试。
-- `release.yml`：校验 tag、运行测试并发布 Release。
+- `release.yml`：当 `master` 上 `mcdreforged.plugin.json` 的版本发生变化时自动发布，
+  也可在 Actions 页面手动触发。
 
 ## 发布流程
 
 1. 按[语义化版本](https://semver.org/)更新 `mcdreforged.plugin.json` 中的 `version`。
 2. 若用户可见行为有变化，更新 readme/introduction。
 3. 运行 `pytest -m "not e2e"`，最好再跑一遍 E2E。
-4. 提交改动。
-5. 创建并推送与元数据版本完全一致的 tag `vX.Y.Z`：
-
-   ```bash
-   git tag vX.Y.Z
-   git push origin vX.Y.Z
-   ```
-
-6. Release workflow 会校验版本、运行单元测试、打包 `ColorMe-vX.Y.Z.mcdr`，
-   并创建带有自动生成说明和打包插件的 GitHub Release。
+4. 提交版本变更。
+5. 推送到 `master`，或在 Actions 页面手动运行 `Release` workflow。
+6. workflow 检测到版本变化后，会运行单元测试、打包 `ColorMe-vX.Y.Z.mcdr`、
+   在该提交上创建 tag `vX.Y.Z`，并发布带自动生成说明的 GitHub Release。
+   若该版本的 Release 已存在则跳过，因此可安全重复运行。
 
 ## 依赖
 
