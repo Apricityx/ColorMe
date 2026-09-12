@@ -23,6 +23,7 @@ MANIFEST_URL = 'https://piston-meta.mojang.com/mc/game/version_manifest_v2.json'
 
 RCON_PASSWORD = 'colorme-e2e'
 MC_VERSION = os.environ.get('MC_VERSION', '1.12.2')
+MCDR_LANGUAGE = os.environ.get('MCDR_E2E_LANGUAGE', 'en_us')
 JAVA_BIN = os.environ.get('JAVA_BIN', 'java')
 E2E_ENABLED = os.environ.get('MCDR_E2E') == '1'
 KEEP_RUN_DIR = os.environ.get('MCDR_E2E_KEEP') == '1'
@@ -87,6 +88,7 @@ class MCDRInstance:
         self.game_port = game_port
         self.rcon_port = rcon_port
         self.mc_version = MC_VERSION
+        self.language = MCDR_LANGUAGE
         self._lines: list[str] = []
         self._lock = threading.Lock()
         self._rcon: RconConnection | None = None
@@ -217,7 +219,7 @@ def _write_server_files(server_dir: Path, server_jar: Path, game_port: int, rcon
 
 def _write_mcdr_config(mcdr_root: Path, rcon_port: int):
     config = {
-        'language': 'en_us',
+        'language': MCDR_LANGUAGE,
         'working_directory': 'server',
         'start_command': [JAVA_BIN, '-Xmx1024M', '-jar', 'server.jar', 'nogui'],
         'handler': 'vanilla_handler',
@@ -291,7 +293,7 @@ def start_instance() -> MCDRInstance:
     except Exception:
         instance.stop()
         raise
-    if f'Plugin color_me@' not in instance.output():
+    if 'color_me@' not in instance.output():
         instance.stop()
         raise RuntimeError(f'plugin {packed_plugin.name} does not appear to be loaded:\n{instance.output()}')
     return instance

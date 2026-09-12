@@ -7,6 +7,11 @@ class FakeInfo:
     version: Optional[str] = None
 
 
+class FakePreference:
+    def __init__(self, language: str = 'en_us'):
+        self.language = language
+
+
 class FakeServer:
     def __init__(self, version: Optional[str] = '1.20.4', started: bool = True):
         self.version = version
@@ -34,10 +39,17 @@ class FakeServer:
 
 
 class FakeSource:
-    def __init__(self, server: FakeServer, player: Optional[str] = None, permission: int = 4):
+    def __init__(
+        self,
+        server: FakeServer,
+        player: Optional[str] = None,
+        permission: int = 4,
+        language: str = 'en_us',
+    ):
         self.server = server
         self.player = player
         self.permission = permission
+        self.language = language
         self.replies: list = []
 
     @property
@@ -57,16 +69,19 @@ class FakeSource:
     def get_permission_level(self) -> int:
         return self.permission
 
+    def get_preference(self) -> FakePreference:
+        return FakePreference(self.language)
+
     def has_permission(self, level: int) -> bool:
         return self.permission >= level
 
 
-def player_source(server: FakeServer, player: str = 'Steve', permission: int = 4) -> FakeSource:
-    return FakeSource(server, player=player, permission=permission)
+def player_source(server: FakeServer, player: str = 'Steve', permission: int = 4, language: str = 'en_us') -> FakeSource:
+    return FakeSource(server, player=player, permission=permission, language=language)
 
 
-def console_source(server: FakeServer, permission: int = 4) -> FakeSource:
-    return FakeSource(server, permission=permission)
+def console_source(server: FakeServer, permission: int = 4, language: str = 'en_us') -> FakeSource:
+    return FakeSource(server, permission=permission, language=language)
 
 
 def run_command(server: FakeServer, source: FakeSource, command: str):

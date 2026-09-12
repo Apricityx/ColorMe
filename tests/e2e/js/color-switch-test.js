@@ -18,7 +18,7 @@ async function main() {
 
   bot.chat(`!!color ${FIRST_COLOR}`);
   await waitFor(
-    () => chats.some((line) => line.includes('染色为') && line.includes(FIRST_COLOR)),
+    () => chats.some((line) => line.includes(BOT) && line.toLowerCase().includes(FIRST_COLOR)),
     15000,
     `first color (${FIRST_COLOR}) confirmation`,
   );
@@ -26,7 +26,7 @@ async function main() {
   chats.length = 0;
   bot.chat(`!!color ${SECOND_COLOR}`);
   await waitFor(
-    () => chats.some((line) => line.includes('染色为') && line.includes(SECOND_COLOR)),
+    () => chats.some((line) => line.includes(BOT) && line.toLowerCase().includes(SECOND_COLOR)),
     15000,
     `second color (${SECOND_COLOR}) confirmation`,
   );

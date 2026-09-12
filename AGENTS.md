@@ -45,6 +45,7 @@ technical reason.
     color_me/__init__.py        command registration and command handlers
     color_me/colors.py          supported colors and owned team names
     color_me/team_commands.py   version-aware vanilla team command builders
+    color_me/i18n.py            English and Chinese user-facing messages
 
 Supported colors must be defined only in `color_me/colors.py`. Differences
 between 1.12.x and 1.13+ team command syntax belong in
@@ -89,6 +90,11 @@ Commands must:
 
 `install` and `uninstall` require MCDReforged permission level 2 (helper) or higher.
 `!!color <color>` is player-only. Change this behavior only deliberately.
+
+All user-facing messages must be defined in `color_me/i18n.py` and rendered with
+`tr(source, key, **kwargs)`; never hardcode a message in a handler. `en_us` and
+`zh_cn` must always define the same keys and placeholders. Unknown languages fall
+back to English, `zh_*` languages fall back to Chinese.
 
 ## Code Style
 
@@ -146,6 +152,7 @@ Automated tests live in `tests/`:
   or Minecraft server is required.
 - `MCDR_E2E=1 MC_VERSION=<version> pytest tests/e2e` runs the end-to-end tests
   against a real vanilla server, MCDReforged, RCON and mineflayer clients.
+  Set `MCDR_E2E_LANGUAGE=en_us` or `zh_cn` to test both message languages.
   See CONTRIBUTING.md for the prerequisites.
 
 Before considering a change complete:

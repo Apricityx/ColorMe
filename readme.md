@@ -1,4 +1,4 @@
-[[中文]](./introduction/introduction-zh_cn.md) | [English]
+[[中文]](./readme-zh_cn.md) | [English]
 
 # ColorMe
 
@@ -14,6 +14,8 @@ by joining a team.
 - Works on Minecraft **1.12.x** (`/scoreboard teams`) and **1.13+** (`/team`)
 - The Minecraft server manages all team state; ColorMe implements no custom rendering
   and no second state store
+- English and Chinese plugin messages, following each command source's MCDReforged
+  language preference
 - ColorMe only creates, modifies and removes its own `__`-prefixed teams
 
 ## Requirements
@@ -60,6 +62,14 @@ dark_red, dark_blue, dark_green, dark_aqua, dark_purple, dark_gray
 On Minecraft 1.12.x the plugin uses `/scoreboard teams add|remove|join|option`; on
 1.13+ it uses `/team add|remove|join|modify`.
 
+## Languages
+
+Plugin messages are provided in English (`en_us`) and Chinese (`zh_cn`). The language of
+each reply is selected from the MCDReforged preference of the command source, so console
+output follows the MCDR language and each player sees their own preferred language.
+Other languages fall back to English; `zh_*` languages fall back to Chinese.
+The public color-change broadcast uses the language of the player who changed their color.
+
 ## Notes and limitations
 
 - A player can only be in one team at a time (vanilla behavior). If your server uses
@@ -77,7 +87,8 @@ On Minecraft 1.12.x the plugin uses `/scoreboard teams add|remove|join|option`; 
 ## Development
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for the development setup, the test suites and
-the release process.
+the release process. A Chinese version is available at
+[CONTRIBUTING-zh_cn.md](./CONTRIBUTING-zh_cn.md).
 
 ## License
 

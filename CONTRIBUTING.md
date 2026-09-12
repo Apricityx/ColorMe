@@ -1,3 +1,5 @@
+[[中文]](./CONTRIBUTING-zh_cn.md) | [English]
+
 # Contributing to ColorMe
 
 Thanks for taking the time to improve ColorMe. Keep changes small, predictable and
@@ -10,6 +12,7 @@ color_me/
   __init__.py        command registration and command handlers
   colors.py          the single source of truth for colors and team names
   team_commands.py   version-aware vanilla team command builders
+  i18n.py            English and Chinese plugin messages
 tests/
   helpers.py         fake MCDR server and command sources
   test_*.py          unit tests and MCDR API tests
@@ -52,13 +55,16 @@ Requirements:
 ```bash
 cd tests/e2e/js && npm install && cd ../../..
 MCDR_E2E=1 MC_VERSION=1.20.4 pytest tests/e2e
-MCDR_E2E=1 MC_VERSION=1.12.2 pytest tests/e2e
+MCDR_E2E=1 MC_VERSION=1.12.2 MCDR_E2E_LANGUAGE=zh_cn pytest tests/e2e
 ```
 
 Useful environment variables:
 
 - `MCDR_E2E=1` enables the suite.
 - `MC_VERSION` selects the vanilla server version (default `1.12.2`).
+- `MCDR_E2E_LANGUAGE` selects the MCDR language used by the test instance
+  (default `en_us`); console assertions follow it, so run both languages when you
+  touch user-facing messages.
 - `JAVA_BIN` overrides the `java` executable.
 - `MCDR_E2E_KEEP=1` keeps the generated MCDR working directory in `tests/e2e/.run/`
   for debugging.
@@ -75,10 +81,21 @@ Useful environment variables:
 - Keep error messages useful and keep the vanilla server as the source of truth for the
   team state. Broadcasting a chat message is not proof that the team state changed.
 
+## Localization
+
+- All user-facing text lives in `color_me/i18n.py` and is rendered with
+  `tr(source, key, **kwargs)`. The language comes from the command source's MCDReforged
+  preference (`source.get_preference().language`).
+- `en_us` and `zh_cn` must always contain the same keys and the same placeholders;
+  `tests/test_i18n.py` enforces this.
+- Never hardcode a user-facing string in a handler. Add a key to both languages instead.
+- Unknown languages fall back to `en_us`, `zh_*` languages fall back to `zh_cn`.
+
 ## Pull requests
 
 - Run `pytest -m "not e2e"` before opening a PR; CI runs it as well.
 - If your change affects team synchronization, run the E2E suite with two clients.
+- If your change touches user-facing messages, run the E2E suite in both languages.
 - Describe compatibility implications, especially for 1.12.x vs 1.13+ and for other
   plugins that use vanilla teams.
 - Avoid unrelated refactors.
@@ -87,8 +104,8 @@ Useful environment variables:
 
 - `ci.yml` runs the unit/API tests on Python 3.10 and 3.13 and builds a `.mcdr`
   artifact on every push and pull request.
-- `e2e.yml` runs the Minecraft end-to-end suite for 1.12.2 and 1.20.4 on pushes to
-  `master`, weekly and on manual dispatch.
+- `e2e.yml` runs the Minecraft end-to-end suite for 1.12.2 (Chinese MCDR) and 1.20.4
+  (English MCDR) on pushes to `master`, weekly and on manual dispatch.
 - `release.yml` verifies the tag, runs the tests and publishes the release.
 
 ## Release process

@@ -24,7 +24,7 @@ async function main() {
 
   botA.chat(`!!color ${COLOR}`);
   await waitFor(
-    () => chatsA.some((line) => line.includes('染色为') && line.includes(COLOR)),
+    () => chatsA.some((line) => line.includes(BOT_A) && line.toLowerCase().includes(COLOR)),
     15000,
     'color confirmation on bot A',
   );
