@@ -33,7 +33,7 @@ jobs:
           cache-dependency-path: |
             requirements.txt
             requirements-dev.txt
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: ${{ matrix.java-version }}
