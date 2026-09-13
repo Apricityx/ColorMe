@@ -45,7 +45,7 @@ jobs:
         run: pip install -r requirements.txt
       - name: Pack plugin
         run: python -m mcdreforged pack -i . -o build
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ColorMe-plugin
           path: build/*.mcdr
