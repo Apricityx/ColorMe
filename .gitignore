@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.venv/
+.idea/
+.pytest_cache/
+build/
+dist/
+*.egg-info/
+tests/e2e/.cache/
+tests/e2e/.run/
+tests/e2e/js/node_modules/

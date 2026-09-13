@@ -1,1 +1,1 @@
-mcdreforged~=2.14.7
+mcdreforged~=2.15.7
